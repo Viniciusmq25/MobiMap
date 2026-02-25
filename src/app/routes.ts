@@ -25,4 +25,6 @@ export const router = createBrowserRouter([
       { path: 'cenarios', Component: BudgetSimulator },
     ],
   },
-]);
+], {
+  basename: '/mobimap',
+});
