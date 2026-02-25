@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import { universitiesRouter } from './routes/universities';
 import { presetsRouter } from './routes/presets';
@@ -24,6 +25,14 @@ app.use('/api/universities', universitiesRouter);
 app.use('/api/comparisons/presets', presetsRouter);
 app.use('/api/scenarios', scenariosRouter);
 app.use('/api/ranking', rankingRouter);
+
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../static')));
+
+// SPA fallback
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(__dirname, '../static', 'index.html'));
+});
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
