@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UniversityOption {
+  id                     String   @id @default(uuid())
+  universityName         String
+  city                   String
+  country                String
+  countryCode            String
+  latitude               Float
+  longitude              Float
+  programArea            String   @default("STEM")
+  stemFocus              String[]
+  exchangeDurationMonths Int      @default(6)
+  websiteUrl             String   @default("")
+  departmentUrl          String   @default("")
+  languageOfInstruction  String[]
+  localLanguage          String[]
+  cityType               String   @default("medium") // small|medium|large|capital
+
+  // Estimated Monthly Cost (stored as JSON)
+  estimatedMonthlyCost Json @default("{}")
+
+  // Housing Options (stored as JSON array)
+  housingOptions Json @default("[]")
+
+  // Academic Profile scores
+  academicProfile Json @default("{}")
+
+  // Life Profile scores
+  lifeProfile Json @default("{}")
+
+  // User Preferences Fit scores
+  userPreferencesFit Json @default("{}")
+
+  // Status & Priority
+  status      String @default("interested") // interested|shortlisted|applied|accepted|rejected|discarded|chosen
+  priorityTag String @default("B")          // A|B|C
+
+  // Lists
+  pros      String[]
+  cons      String[]
+  redFlags  String[]
+
+  // Notes & Links
+  personalNotes String @default("")
+  links         Json   @default("[]") // [{label, url}]
+
+  // Deadlines
+  deadlines Json @default("[]") // [{label, date, type}]
+
+  // Checklist
+  checklist Json @default("[]") // [{id, label, completed}]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("university_options")
+}
+
+model ComparisonPreset {
+  id        String   @id @default(uuid())
+  name      String
+  weights   Json     // {cost, housing, stemStrength, workOpportunity, adaptation, qualityOfLife, studentLife}
+  createdAt DateTime @default(now())
+
+  @@map("comparison_presets")
+}
+
+model DecisionScenario {
+  id                       String   @id @default(uuid())
+  name                     String
+  scholarshipAmountMonthly Float    @default(0)
+  currency                 String   @default("EUR")
+  housingAdjustment        Float    @default(0)
+  partTimeIncomeMonthly    Float    @default(0)
+  notes                    String   @default("")
+  createdAt                DateTime @default(now())
+
+  @@map("decision_scenarios")
+}
