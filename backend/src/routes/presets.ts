@@ -38,7 +38,7 @@ presetsRouter.put('/:id', async (req: Request, res: Response) => {
   try {
     const { name, weights } = req.body;
     const preset = await prisma.comparisonPreset.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: { name, weights },
     });
     res.json(preset);
@@ -52,7 +52,7 @@ presetsRouter.put('/:id', async (req: Request, res: Response) => {
 presetsRouter.delete('/:id', async (req: Request, res: Response) => {
   try {
     await prisma.comparisonPreset.delete({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
     });
     res.status(204).send();
   } catch (error) {

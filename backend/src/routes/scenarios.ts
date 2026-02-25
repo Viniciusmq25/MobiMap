@@ -33,7 +33,7 @@ scenariosRouter.post('/', async (req: Request, res: Response) => {
 scenariosRouter.put('/:id', async (req: Request, res: Response) => {
   try {
     const scenario = await prisma.decisionScenario.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: req.body,
     });
     res.json(scenario);
@@ -47,7 +47,7 @@ scenariosRouter.put('/:id', async (req: Request, res: Response) => {
 scenariosRouter.delete('/:id', async (req: Request, res: Response) => {
   try {
     await prisma.decisionScenario.delete({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
     });
     res.status(204).send();
   } catch (error) {

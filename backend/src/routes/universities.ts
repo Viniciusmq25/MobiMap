@@ -20,7 +20,7 @@ universitiesRouter.get('/', async (_req: Request, res: Response) => {
 universitiesRouter.get('/:id', async (req: Request, res: Response) => {
   try {
     const university = await prisma.universityOption.findUnique({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
     });
     if (!university) {
       return res.status(404).json({ error: 'University not found' });
@@ -78,7 +78,7 @@ universitiesRouter.put('/:id', async (req: Request, res: Response) => {
     }
 
     const university = await prisma.universityOption.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data,
     });
     res.json(university);
@@ -107,7 +107,7 @@ universitiesRouter.patch('/:id', async (req: Request, res: Response) => {
     }
 
     const university = await prisma.universityOption.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data,
     });
     res.json(university);
@@ -121,7 +121,7 @@ universitiesRouter.patch('/:id', async (req: Request, res: Response) => {
 universitiesRouter.delete('/:id', async (req: Request, res: Response) => {
   try {
     await prisma.universityOption.delete({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
     });
     res.status(204).send();
   } catch (error) {
@@ -134,7 +134,7 @@ universitiesRouter.delete('/:id', async (req: Request, res: Response) => {
 universitiesRouter.get('/:id/checklist', async (req: Request, res: Response) => {
   try {
     const university = await prisma.universityOption.findUnique({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       select: { id: true, checklist: true },
     });
     if (!university) {
@@ -152,7 +152,7 @@ universitiesRouter.put('/:id/checklist', async (req: Request, res: Response) => 
   try {
     const { checklist } = req.body;
     const university = await prisma.universityOption.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: { checklist },
       select: { id: true, checklist: true },
     });
