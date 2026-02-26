@@ -19,7 +19,7 @@ function transformUniversityOptionToFrontend(data: any) {
     lng: data.longitude || 0,
     website: data.websiteUrl || '',
     stemFocus: data.stemFocus || [],
-    status: data.status || 'interested',
+    status: mapStatus(data.status || 'interested'),
     priority: data.priorityTag || null,
     isFavorite: false,
 
@@ -97,6 +97,20 @@ function transformUniversityOptionToFrontend(data: any) {
     createdAt: data.createdAt || new Date().toISOString(),
     updatedAt: data.updatedAt || new Date().toISOString(),
   };
+}
+
+// Map database status values to frontend Status type
+function mapStatus(dbStatus: string): 'interested' | 'candidate' | 'approved' | 'discarded' {
+  switch (dbStatus) {
+    case 'interested': return 'interested';
+    case 'shortlisted':
+    case 'applied': return 'candidate';
+    case 'accepted':
+    case 'chosen': return 'approved';
+    case 'rejected':
+    case 'discarded': return 'discarded';
+    default: return 'interested';
+  }
 }
 
 // Helper to get flag emoji from country code
