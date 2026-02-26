@@ -247,6 +247,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return { ...init, universities: SEED_UNIVERSITIES };
   });
 
+  // Fetch universities from API on mount
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      try {
+        const response = await fetch('/mobimap/api/universities');
+        if (response.ok) {
+          const universities = await response.json();
+          dispatch({ type: 'SET_UNIVERSITIES', payload: universities });
+        }
+      } catch (error) {
+        console.error('Failed to fetch universities from API:', error);
+        // Fallback to localStorage/seed data if API fails
+      }
+    };
+
+    fetchUniversities();
+  }, []);
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
