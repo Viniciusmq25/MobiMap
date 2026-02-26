@@ -1,6 +1,113 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../index';
 
+// Transform UniversityOption from DB format to Frontend format
+function transformUniversityOptionToFrontend(data: any) {
+  const cost = data.estimatedMonthlyCost || {};
+  const academic = data.academicProfile || {};
+  const life = data.lifeProfile || {};
+  const fit = data.userPreferencesFit || {};
+
+  return {
+    id: data.id,
+    name: data.universityName || '',
+    acronym: data.id.toUpperCase().substring(0, 4),
+    city: data.city || '',
+    country: data.country || '',
+    flag: getCountryFlag(data.countryCode || ''),
+    lat: data.latitude || 0,
+    lng: data.longitude || 0,
+    website: data.websiteUrl || '',
+    stemFocus: data.stemFocus || [],
+    status: data.status || 'interested',
+    priority: data.priorityTag || null,
+    isFavorite: false,
+
+    // Monthly costs
+    monthlyRent: cost.housing || 0,
+    monthlyFood: cost.food || 0,
+    monthlyTransport: cost.transport || 0,
+    monthlyPhone: cost.internetPhone || 0,
+    monthlyAcademic: cost.studyMaterials || 0,
+    monthlyLeisure: cost.leisure || 0,
+    monthlyTravel: 0,
+    monthlyHealth: cost.healthInsurance || 0,
+    monthlyMisc: cost.misc || 0,
+
+    // One-time costs
+    flightCost: 0,
+    visaCost: 0,
+    housingDeposit: 0,
+    setupCost: 0,
+    insuranceCost: 0,
+
+    // Income
+    scholarship: 0,
+
+    // Academic
+    stemReputation: academic.stemStrengthScore || 5,
+    researchOpportunities: academic.researchOpportunityScore || 5,
+    englishCourses: 5,
+    creditCompatibility: 5,
+    labAccess: academic.labInfrastructureScore || 5,
+    academicIntensity: 5,
+
+    // Work
+    internshipChance: academic.internshipPotentialScore || 5,
+    networkingQuality: academic.industryConnectionScore || 5,
+    startupEcosystem: 5,
+    universityJobs: academic.workOpportunityScore || 5,
+
+    // Adaptation
+    languageDifficulty: fit.languageFitScore ? 10 - fit.languageFitScore : 5,
+    climateScore: life.climatePreferenceScore || 5,
+    safety: life.safetyScore || 5,
+    qualityOfLife: life.qualityOfLifeScore || 5,
+    internationalCommunity: 5,
+    publicTransport: life.publicTransportScore || 5,
+
+    // Personal fit
+    emotionalScore: fit.overallFitScore || 5,
+    regretRisk: 'low',
+
+    // Text fields
+    language: data.languageOfInstruction ? data.languageOfInstruction.join(', ') : '',
+    climate: '',
+    professorOfInterest: '',
+    pros: data.pros || [],
+    cons: data.cons || [],
+    redFlags: data.redFlags || [],
+    notes: data.personalNotes || '',
+    links: data.links ? data.links.map((l: any) => l.url) : [],
+
+    // Timeline
+    applicationDeadline: data.deadlines?.find((d: any) => d.type === 'application')?.date || '',
+    visaDeadline: data.deadlines?.find((d: any) => d.type === 'visa')?.date || '',
+    housingDeadline: data.deadlines?.find((d: any) => d.type === 'housing')?.date || '',
+    semesterStart: '',
+    semesterEnd: '',
+
+    // Checklist
+    checklist: data.checklist || [],
+
+    // Diary
+    diary: [],
+
+    // Metadata
+    createdAt: data.createdAt || new Date().toISOString(),
+    updatedAt: data.updatedAt || new Date().toISOString(),
+  };
+}
+
+// Helper to get flag emoji from country code
+function getCountryFlag(countryCode: string): string {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+}
+
 export const universitiesRouter = Router();
 
 // GET /api/universities
@@ -9,7 +116,8 @@ universitiesRouter.get('/', async (_req: Request, res: Response) => {
     const universities = await prisma.universityOption.findMany({
       orderBy: { updatedAt: 'desc' },
     });
-    res.json(universities);
+    const transformed = universities.map(transformUniversityOptionToFrontend);
+    res.json(transformed);
   } catch (error) {
     console.error('Error fetching universities:', error);
     res.status(500).json({ error: 'Failed to fetch universities' });
@@ -25,7 +133,8 @@ universitiesRouter.get('/:id', async (req: Request, res: Response) => {
     if (!university) {
       return res.status(404).json({ error: 'University not found' });
     }
-    res.json(university);
+    const transformed = transformUniversityOptionToFrontend(university);
+    res.json(transformed);
   } catch (error) {
     console.error('Error fetching university:', error);
     res.status(500).json({ error: 'Failed to fetch university' });
