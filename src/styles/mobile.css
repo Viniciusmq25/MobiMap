@@ -1,0 +1,123 @@
+/* Mobile-First Responsive Design */
+
+/* Safe area support for notched devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Prevent text selection on elements that shouldn't be selectable */
+button,
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Improve touch targets for mobile (minimum 44x44px) */
+button,
+a,
+input[type='checkbox'],
+input[type='radio'],
+[role='button'] {
+  min-height: 44px;
+  min-width: 44px;
+  position: relative;
+}
+
+/* Ensure inputs are properly sized on mobile */
+input,
+textarea,
+select {
+  font-size: 16px; /* Prevents zoom on iOS */
+  line-height: 1.5;
+}
+
+/* Smooth scrolling and prevent bounce */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent overscroll bounce on iOS */
+body {
+  overscroll-behavior-y: contain;
+}
+
+/* Mobile-specific typography adjustments */
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  h4 {
+    font-size: 1rem;
+  }
+
+  body {
+    line-height: 1.6;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+/* Desktop and larger screens */
+@media (min-width: 1025px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase spacing for touch interfaces */
+  button,
+  a,
+  [role='button'] {
+    padding: 12px;
+  }
+
+  /* Better contrast for touch */
+  button:active {
+    opacity: 0.8;
+  }
+
+  /* Remove hover states on touch devices */
+  *:hover {
+    transition: none;
+  }
+}
+
+/* Keyboard input detection */
+@media (hover: hover) and (pointer: fine) {
+  button:hover,
+  a:hover,
+  [role='button']:hover {
+    cursor: pointer;
+  }
+}
+
+/* Leaflet popup custom styles */

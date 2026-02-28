@@ -1,15 +1,61 @@
 
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>MobiMap STEM Web App</title>
-    </head>
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+    <meta name="description" content="Interactive mapping application for STEM education" />
+    <meta name="theme-color" content="#10b981" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="MobiMap" />
 
-    <body>
-      <div id="root"></div>
-      <script type="module" src="/src/main.tsx"></script>
-    </body>
-  </html>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/mobimap/favicon.svg" />
+    <link rel="apple-touch-icon" href="/mobimap/favicon.svg" />
+    <link rel="shortcut icon" href="/mobimap/favicon.svg" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/mobimap/manifest.json" />
+
+    <!-- Preload fonts and critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <title>MobiMap STEM</title>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Register Service Worker for offline functionality
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('/mobimap/service-worker.js')
+          .then((registration) => {
+            console.log('Service Worker registered successfully:', registration);
+          })
+          .catch((error) => {
+            console.log('Service Worker registration failed:', error);
+          });
+      }
+
+      // Prevent zoom on double-tap
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        'touchend',
+        function (event) {
+          const now = Date.now();
+          if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        },
+        false
+      );
+    </script>
+  </body>
+</html>
   

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="192" height="192" fill="url(#grad)" rx="45"/>
+
+  <!-- Map pin (location icon) -->
+  <path d="M96 20 C70 20, 50 40, 50 66 C50 100, 96 160, 96 160 C96 160, 142 100, 142 66 C142 40, 122 20, 96 20 Z" fill="white" opacity="0.9"/>
+
+  <!-- Inner circle -->
+  <circle cx="96" cy="66" r="18" fill="url(#grad)"/>
+</svg>
