@@ -106,8 +106,8 @@ export function Layout() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Mobile top bar */}
-        <header className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-emerald-100 shadow-sm">
+        {/* Mobile top bar — sticky so it stays visible when content overflows */}
+        <header className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-white border-b border-emerald-100 shadow-sm">
           <button
             onClick={() => setMobileOpen(true)}
             className="p-1.5 rounded-lg text-slate-500 hover:bg-emerald-50"

@@ -286,6 +286,7 @@ export function BudgetSimulator() {
     const base = applyProfile(u, profile);
     const r = applyScenarios(base, u.scholarship, activeScenarios, eurBrlRate);
     return {
+      id: u.id,
       name: u.acronym,
       mensal: r.totalMonthly,
       total: r.totalMonthly * months + calcOneTimeTotal(u) + extraReserve,
@@ -752,6 +753,12 @@ export function BudgetSimulator() {
                     <BarChart
                       data={comparisonData}
                       margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
+                      style={{ cursor: 'pointer' }}
+                      onClick={(data: { activePayload?: { payload: { id: string } }[] } | null) => {
+                        if (data?.activePayload?.[0]) {
+                          setSelectedId(data.activePayload[0].payload.id);
+                        }
+                      }}
                     >
                       <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} />
                       <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
@@ -761,12 +768,13 @@ export function BudgetSimulator() {
                           name === 'mensal' ? 'Por mês' : `Total ${months} meses`,
                         ]}
                         contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 12 }}
+                        cursor={{ fill: 'rgba(16,185,129,0.08)' }}
                       />
                       <Bar dataKey="mensal" name="mensal" radius={[6, 6, 0, 0]}>
                         {comparisonData.map((entry, i) => (
                           <Cell
                             key={i}
-                            fill={entry.name === uni.acronym ? '#10b981' : '#e2e8f0'}
+                            fill={entry.id === selectedId ? '#10b981' : '#e2e8f0'}
                           />
                         ))}
                       </Bar>
@@ -774,10 +782,13 @@ export function BudgetSimulator() {
                   </ResponsiveContainer>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mt-3">
                     {comparisonData.map((d) => (
-                      <div
+                      <button
                         key={d.name}
-                        className={`text-center p-2 rounded-xl ${
-                          d.name === uni.acronym ? 'bg-emerald-50 border border-emerald-200' : 'bg-slate-50'
+                        onClick={() => setSelectedId(d.id)}
+                        className={`text-center p-2 rounded-xl transition-all ${
+                          d.id === selectedId
+                            ? 'bg-emerald-50 border-2 border-emerald-400 shadow-sm'
+                            : 'bg-slate-50 border border-transparent hover:border-emerald-200 hover:bg-emerald-50/50'
                         }`}
                       >
                         <div className="text-base">{d.flag}</div>
@@ -790,7 +801,7 @@ export function BudgetSimulator() {
                         <div className="text-xs text-slate-400">
                           €{(d.total / 1000).toFixed(1)}k total
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </div>

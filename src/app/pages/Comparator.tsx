@@ -127,8 +127,8 @@ export function Comparator() {
         </button>
       </div>
 
-      {/* Category filters */}
-      <div className="flex gap-2 flex-wrap mb-4">
+      {/* Category filters — sticky when scrolling down */}
+      <div className="sticky top-0 z-20 bg-emerald-50 -mx-4 px-4 lg:-mx-8 lg:px-8 py-2 mb-2 flex gap-2 flex-wrap border-b border-slate-100">
         {categories.map((cat) => (
           <button
             key={cat}
@@ -215,12 +215,15 @@ export function Comparator() {
                 <React.Fragment key={category}>
                   <tr className="bg-slate-50">
                     <td
-                      colSpan={universities.length + 2}
-                      className="px-4 py-2 text-xs text-slate-500 uppercase tracking-wider sticky left-0"
+                      className="px-4 py-2 text-xs text-slate-500 uppercase tracking-wider sticky left-0 z-10 bg-slate-50"
                       style={{ fontWeight: 600 }}
                     >
                       {category}
                     </td>
+                    {universities.map((u) => (
+                      <td key={u.id} className="bg-slate-50" />
+                    ))}
+                    {universities.length < 5 && <td className="bg-slate-50" />}
                   </tr>
                   {criteria.map((criterion) => {
                     const values = universities.map((u) => ({

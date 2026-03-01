@@ -1,5 +1,15 @@
 /* Mobile-First Responsive Design */
 
+/* Fix iOS Safari 100vh issue — use dynamic viewport height when available */
+@supports (height: 100dvh) {
+  .h-screen {
+    height: 100dvh;
+  }
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+}
+
 /* Safe area support for notched devices */
 @supports (padding: max(0px)) {
   body {

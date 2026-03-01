@@ -179,22 +179,35 @@ export function MapPage() {
         <div ref={mapContainerRef} style={{ width: '100%', height: '100%', background: '#e0f2f1' }} />
       </div>
 
-      {/* Left panel toggle */}
-      <button
-        onClick={() => setShowPanel(!showPanel)}
-        className="absolute top-4 left-4 z-20 bg-white shadow-md rounded-xl p-2 hover:bg-emerald-50 transition-colors"
-        style={{ zIndex: 999 }}
-      >
-        <Filter className="w-4 h-4 text-slate-600" />
-      </button>
+      {/* Left panel toggle — only visible when panel is closed */}
+      {!showPanel && (
+        <button
+          onClick={() => setShowPanel(true)}
+          className="absolute top-4 z-[999] bg-white shadow-md rounded-lg p-1.5 hover:bg-emerald-50 transition-colors"
+          style={{ right: selectedId ? '316px' : '16px' }}
+          aria-label="Abrir filtros"
+        >
+          <Filter className="w-3.5 h-3.5 text-slate-600" />
+        </button>
+      )}
 
       {/* Left panel */}
       {showPanel && (
         <div
-          className="absolute top-4 left-14 bottom-4 z-20 w-72 flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden"
+          className="absolute top-4 left-4 bottom-4 z-20 w-72 flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden"
           style={{ zIndex: 998 }}
         >
           <div className="p-4 border-b border-slate-100">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-slate-700" style={{ fontWeight: 600 }}>Filtrar</span>
+              <button
+                onClick={() => setShowPanel(false)}
+                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+                aria-label="Fechar filtros"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
             <div className="relative mb-3">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
