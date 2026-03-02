@@ -63,7 +63,14 @@ export function MapPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
-  const [showPanel, setShowPanel] = useState(true);
+  const [showPanel, setShowPanel] = useState(window.innerWidth >= 1024);
+
+  // Close filter panel when mobile sidebar opens
+  useEffect(() => {
+    const close = () => setShowPanel(false);
+    window.addEventListener('sidebar-open', close);
+    return () => window.removeEventListener('sidebar-open', close);
+  }, []);
 
   const ranked = getRankedUniversities();
 
@@ -179,30 +186,30 @@ export function MapPage() {
         <div ref={mapContainerRef} style={{ width: '100%', height: '100%', background: '#e0f2f1' }} />
       </div>
 
-      {/* Left panel toggle — only visible when panel is closed */}
+      {/* Filter toggle — top-right, small, hidden when panel open on mobile */}
       {!showPanel && (
         <button
           onClick={() => setShowPanel(true)}
-          className="absolute top-4 z-[999] bg-white shadow-md rounded-lg p-1.5 hover:bg-emerald-50 transition-colors"
-          style={{ right: selectedId ? '316px' : '16px' }}
+          className="absolute top-3 right-3 z-20 bg-white shadow-md rounded-lg p-1.5 hover:bg-emerald-50 transition-colors flex items-center justify-center"
+          style={{ zIndex: 999 }}
           aria-label="Abrir filtros"
         >
           <Filter className="w-3.5 h-3.5 text-slate-600" />
         </button>
       )}
 
-      {/* Left panel */}
+      {/* Filter panel — right side on desktop, full width on mobile */}
       {showPanel && (
         <div
-          className="absolute top-4 left-4 bottom-4 z-20 w-72 flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden"
+          className="absolute top-0 left-0 bottom-0 lg:top-4 lg:left-auto lg:right-4 lg:bottom-4 z-20 w-full sm:w-72 flex flex-col bg-white lg:rounded-2xl shadow-xl overflow-hidden"
           style={{ zIndex: 998 }}
         >
           <div className="p-4 border-b border-slate-100">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm text-slate-700" style={{ fontWeight: 600 }}>Filtrar</span>
+              <span className="text-sm text-slate-600 font-semibold">Filtros</span>
               <button
                 onClick={() => setShowPanel(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
                 aria-label="Fechar filtros"
               >
                 <X className="w-4 h-4" />
@@ -296,7 +303,7 @@ export function MapPage() {
       {/* Selected detail panel */}
       {selectedUni && selectedBreakdown && (
         <div
-          className="absolute top-4 right-4 bottom-4 z-20 w-72 bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden"
+          className={`absolute top-4 bottom-4 z-20 w-72 bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden ${showPanel ? 'right-[19.5rem]' : 'right-4'}`}
           style={{ zIndex: 998 }}
         >
           <div className="p-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">

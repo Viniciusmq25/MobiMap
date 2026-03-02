@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router';
 import {
   LayoutDashboard,
@@ -27,6 +27,13 @@ export function Layout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+
+  // Notify MapPage when mobile sidebar opens so it can close the filter panel
+  useEffect(() => {
+    if (mobileOpen) {
+      window.dispatchEvent(new CustomEvent('sidebar-open'));
+    }
+  }, [mobileOpen]);
 
   return (
     <div className="flex h-screen bg-emerald-50 overflow-hidden">
