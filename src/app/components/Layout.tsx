@@ -36,7 +36,7 @@ export function Layout() {
   }, [mobileOpen]);
 
   return (
-    <div className="flex h-screen bg-emerald-50 overflow-hidden">
+    <div className="fixed inset-0 flex bg-emerald-50 overflow-hidden">
       {/* Mobile overlay */}
       {mobileOpen && (
         <div

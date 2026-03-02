@@ -145,12 +145,11 @@ export function Comparator() {
       </div>
 
       {/* Comparison table */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-x-auto">
           <table className="w-full min-w-[600px]">
             <thead>
               <tr className="border-b border-slate-100">
-                <th className="text-left p-4 text-sm text-slate-500 w-40 bg-slate-50 sticky left-0 z-10">
+                <th className="text-left p-4 text-sm text-slate-500 w-40 min-w-[160px] bg-slate-50 sticky left-0 z-10" style={{ boxShadow: '2px 0 4px -2px rgba(0,0,0,0.06)' }}>
                   Critério
                 </th>
                 {universities.map((u) => (
@@ -194,7 +193,7 @@ export function Comparator() {
             {/* Score row */}
             <tbody>
               <tr className="bg-emerald-50 border-b-2 border-emerald-200">
-                <td className="p-4 text-sm text-emerald-700 sticky left-0 bg-emerald-50 z-10" style={{ fontWeight: 600 }}>
+                <td className="p-4 text-sm text-emerald-700 min-w-[160px] sticky left-0 bg-emerald-50 z-10" style={{ fontWeight: 600, boxShadow: '2px 0 4px -2px rgba(0,0,0,0.06)' }}>
                   🏆 Score Final
                 </td>
                 {universities.map((u) => {
@@ -215,8 +214,8 @@ export function Comparator() {
                 <React.Fragment key={category}>
                   <tr className="bg-slate-50">
                     <td
-                      className="px-4 py-2 text-xs text-slate-500 uppercase tracking-wider sticky left-0 z-10 bg-slate-50"
-                      style={{ fontWeight: 600 }}
+                      className="px-4 py-2 text-xs text-slate-500 uppercase tracking-wider min-w-[160px] sticky left-0 z-10 bg-slate-50"
+                      style={{ fontWeight: 600, boxShadow: '2px 0 4px -2px rgba(0,0,0,0.06)' }}
                     >
                       {category}
                     </td>
@@ -235,7 +234,7 @@ export function Comparator() {
 
                     return (
                       <tr key={criterion.label} className="border-b border-slate-50 hover:bg-slate-50/50">
-                        <td className="p-3 px-4 text-sm text-slate-600 sticky left-0 bg-white z-10 border-r border-slate-50">
+                        <td className="p-3 px-4 text-sm text-slate-600 min-w-[160px] sticky left-0 bg-white z-10" style={{ boxShadow: '2px 0 4px -2px rgba(0,0,0,0.06)' }}>
                           {criterion.label}
                         </td>
                         {universities.map((u) => {
@@ -307,7 +306,6 @@ export function Comparator() {
               ))}
             </tbody>
           </table>
-        </div>
       </div>
 
       {/* Add selector dropdown */}

@@ -180,29 +180,30 @@ export function MapPage() {
   const selectedBreakdown = selectedUni ? calcScoreBreakdown(selectedUni) : null;
 
   return (
-    <div className="relative flex h-full overflow-hidden" style={{ minHeight: 'calc(100vh - 60px)' }}>
+    <div className="relative w-full h-full" style={{ minHeight: 'calc(100vh - 60px)' }}>
       {/* Leaflet map container */}
-      <div className="absolute inset-0" style={{ zIndex: 0 }}>
+      <div className="inset-0" style={{ position: 'absolute', zIndex: 0 }}>
         <div ref={mapContainerRef} style={{ width: '100%', height: '100%', background: '#e0f2f1' }} />
       </div>
 
-      {/* Filter toggle — top-right, small, hidden when panel open on mobile */}
+      {/* Filter toggle — top-right, small */}
       {!showPanel && (
-        <button
-          onClick={() => setShowPanel(true)}
-          className="absolute top-3 right-3 z-20 bg-white shadow-md rounded-lg p-1.5 hover:bg-emerald-50 transition-colors flex items-center justify-center"
-          style={{ zIndex: 999 }}
-          aria-label="Abrir filtros"
-        >
-          <Filter className="w-3.5 h-3.5 text-slate-600" />
-        </button>
+        <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 999 }}>
+          <button
+            onClick={() => setShowPanel(true)}
+            className="bg-white shadow-md rounded-lg p-2 hover:bg-emerald-50 transition-colors flex items-center justify-center"
+            aria-label="Abrir filtros"
+          >
+            <Filter className="w-4 h-4 text-slate-600" />
+          </button>
+        </div>
       )}
 
-      {/* Filter panel — right side on desktop, full width on mobile */}
+      {/* Filter panel — compact top-right on desktop, compact on mobile */}
       {showPanel && (
         <div
-          className="absolute top-0 left-0 bottom-0 lg:top-4 lg:left-auto lg:right-4 lg:bottom-4 z-20 w-full sm:w-72 flex flex-col bg-white lg:rounded-2xl shadow-xl overflow-hidden"
-          style={{ zIndex: 998 }}
+          className="top-2 right-2 z-20 w-64 sm:w-72 max-h-[70vh] flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden"
+          style={{ position: 'absolute', zIndex: 998 }}
         >
           <div className="p-4 border-b border-slate-100">
             <div className="flex items-center justify-between mb-3">
@@ -303,8 +304,8 @@ export function MapPage() {
       {/* Selected detail panel */}
       {selectedUni && selectedBreakdown && (
         <div
-          className={`absolute top-4 bottom-4 z-20 w-72 bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden ${showPanel ? 'right-[19.5rem]' : 'right-4'}`}
-          style={{ zIndex: 998 }}
+          className={`top-2 z-20 w-64 sm:w-72 max-h-[70vh] bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden ${showPanel ? 'right-[17.5rem] sm:right-[19.5rem]' : 'right-2'}`}
+          style={{ position: 'absolute', zIndex: 998 }}
         >
           <div className="p-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
             <div className="flex items-start justify-between">
@@ -437,7 +438,7 @@ export function MapPage() {
 
       {/* Compare badge */}
       {state.compareIds.length > 0 && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30">
+        <div className="bottom-6 left-1/2 -translate-x-1/2 z-30" style={{ position: 'absolute' }}>
           <button
             onClick={() => navigate('/comparador')}
             className="flex items-center gap-2 px-5 py-3 bg-emerald-600 text-white rounded-2xl shadow-xl hover:bg-emerald-700 transition-colors"
