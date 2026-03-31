@@ -20,7 +20,7 @@ function transformUniversityOptionToFrontend(data: any) {
     website: data.websiteUrl || '',
     stemFocus: data.stemFocus || [],
     status: mapStatus(data.status || 'interested'),
-    priority: data.priorityTag || null,
+    priority: mapPriorityTag(data.priorityTag),
     isFavorite: false,
 
     // Monthly costs
@@ -110,6 +110,24 @@ function mapStatus(dbStatus: string): 'interested' | 'candidate' | 'approved' | 
     case 'rejected':
     case 'discarded': return 'discarded';
     default: return 'interested';
+  }
+}
+
+// Normalize external priority values to frontend Priority type
+function mapPriorityTag(dbPriority: unknown): 'A' | 'B' | 'C' | null {
+  if (typeof dbPriority !== 'string') return null;
+  const normalized = dbPriority.trim().toUpperCase();
+
+  switch (normalized) {
+    case 'A':
+    case 'S':
+      return 'A';
+    case 'B':
+      return 'B';
+    case 'C':
+      return 'C';
+    default:
+      return null;
   }
 }
 

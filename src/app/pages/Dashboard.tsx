@@ -204,6 +204,12 @@ export function Dashboard() {
               </div>
             )}
             {ranked.map(({ university: u, breakdown }, idx) => (
+              (() => {
+                const priorityCfg = u.priority
+                  ? PRIORITY_CONFIG[u.priority as keyof typeof PRIORITY_CONFIG]
+                  : null;
+
+                return (
               <div
                 key={u.id}
                 onClick={() => navigate(`/universidades/${u.id}`)}
@@ -221,9 +227,9 @@ export function Dashboard() {
                     <span className="text-slate-800 text-sm truncate" style={{ fontWeight: 600 }}>
                       {u.flag} {u.acronym}
                     </span>
-                    {u.priority && (
+                    {priorityCfg && (
                       <span
-                        className={`text-xs px-1.5 py-0.5 rounded-md border ${PRIORITY_CONFIG[u.priority].color}`}
+                        className={`text-xs px-1.5 py-0.5 rounded-md border ${priorityCfg.color}`}
                       >
                         {u.priority}
                       </span>
@@ -262,6 +268,8 @@ export function Dashboard() {
                   <div className="text-xs text-slate-400">/10</div>
                 </div>
               </div>
+                );
+              })()
             ))}
           </div>
         </div>

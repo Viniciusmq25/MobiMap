@@ -43,6 +43,19 @@ interface LifeProfile {
   publicTransportScore?: number;
 }
 
+interface RankingUniversity {
+  id: string;
+  universityName: string;
+  city: string;
+  country: string;
+  countryCode: string;
+  status: string;
+  priorityTag: string;
+  estimatedMonthlyCost: unknown;
+  academicProfile: unknown;
+  lifeProfile: unknown;
+}
+
 function calcMonthlyCostTotal(cost: MonthlyCost): number {
   return (
     (cost.housing || 0) +
@@ -73,7 +86,9 @@ rankingRouter.post('/calculate', async (req: Request, res: Response) => {
       ? { id: { in: universityIds } }
       : { status: { not: 'discarded' } };
 
-    const universities = await prisma.universityOption.findMany({ where: whereClause });
+    const universities = await prisma.universityOption.findMany({
+      where: whereClause,
+    }) as RankingUniversity[];
 
     if (universities.length === 0) {
       return res.json({ ranking: [] });

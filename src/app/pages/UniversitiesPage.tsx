@@ -213,6 +213,9 @@ export function UniversitiesPage() {
           {allItems.map(({ university: u, breakdown }, idx) => {
             const monthly = calcMonthlyTotal(u);
             const badges = getBadges(u);
+            const priorityCfg = u.priority
+              ? PRIORITY_CONFIG[u.priority as keyof typeof PRIORITY_CONFIG]
+              : null;
             return (
               <div
                 key={u.id}
@@ -250,9 +253,9 @@ export function UniversitiesPage() {
                     <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_CONFIG[u.status].color}`}>
                       {STATUS_CONFIG[u.status].label}
                     </span>
-                    {u.priority && (
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${PRIORITY_CONFIG[u.priority].color}`}>
-                        {u.priority} – {PRIORITY_CONFIG[u.priority].label}
+                    {priorityCfg && (
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${priorityCfg.color}`}>
+                        {u.priority} – {priorityCfg.label}
                       </span>
                     )}
                     {u.isFavorite && <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />}
