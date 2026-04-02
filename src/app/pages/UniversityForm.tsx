@@ -219,7 +219,7 @@ function TagInput({
 export function UniversityForm() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { state, dispatch } = useApp();
+  const { state, apiDispatch } = useApp();
   const isEdit = id && id !== 'nova';
   const existing = isEdit ? state.universities.find((u) => u.id === id) : undefined;
 
@@ -253,10 +253,10 @@ export function UniversityForm() {
   function handleSave() {
     const now = new Date().toISOString();
     if (isEdit && existing) {
-      dispatch({ type: 'UPDATE_UNIVERSITY', payload: { ...form, updatedAt: now } });
+      apiDispatch({ type: 'UPDATE_UNIVERSITY', payload: { ...form, updatedAt: now } });
     } else {
       const newId = `uni-${Date.now()}`;
-      dispatch({
+      apiDispatch({
         type: 'ADD_UNIVERSITY',
         payload: {
           ...form,

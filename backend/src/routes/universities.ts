@@ -7,11 +7,12 @@ function transformUniversityOptionToFrontend(data: any) {
   const academic = data.academicProfile || {};
   const life = data.lifeProfile || {};
   const fit = data.userPreferencesFit || {};
+  const extra = data.extraData || {};
 
   return {
     id: data.id,
     name: data.universityName || '',
-    acronym: data.id.toUpperCase().substring(0, 4),
+    acronym: extra.acronym ?? data.id.toUpperCase().substring(0, 4),
     city: data.city || '',
     country: data.country || '',
     flag: getCountryFlag(data.countryCode || ''),
@@ -21,41 +22,41 @@ function transformUniversityOptionToFrontend(data: any) {
     stemFocus: data.stemFocus || [],
     status: mapStatus(data.status || 'interested'),
     priority: mapPriorityTag(data.priorityTag),
-    isFavorite: false,
+    isFavorite: extra.isFavorite ?? false,
 
-    // Monthly costs
+    // Monthly costs (extra takes priority over cost JSON)
     monthlyRent: cost.housing || 0,
     monthlyFood: cost.food || 0,
     monthlyTransport: cost.transport || 0,
     monthlyPhone: cost.internetPhone || 0,
     monthlyAcademic: cost.studyMaterials || 0,
     monthlyLeisure: cost.leisure || 0,
-    monthlyTravel: 0,
+    monthlyTravel: extra.monthlyTravel ?? 0,
     monthlyHealth: cost.healthInsurance || 0,
     monthlyMisc: cost.misc || 0,
 
-    // One-time costs
-    flightCost: 0,
-    visaCost: 0,
-    housingDeposit: 0,
-    setupCost: 0,
-    insuranceCost: 0,
+    // One-time costs (stored in extra)
+    flightCost: extra.flightCost ?? 0,
+    visaCost: extra.visaCost ?? 0,
+    housingDeposit: extra.housingDeposit ?? 0,
+    setupCost: extra.setupCost ?? 0,
+    insuranceCost: extra.insuranceCost ?? 0,
 
     // Income
-    scholarship: 0,
+    scholarship: extra.scholarship ?? 0,
 
     // Academic
     stemReputation: academic.stemStrengthScore || 5,
     researchOpportunities: academic.researchOpportunityScore || 5,
-    englishCourses: 5,
-    creditCompatibility: 5,
+    englishCourses: extra.englishCourses ?? 5,
+    creditCompatibility: extra.creditCompatibility ?? 5,
     labAccess: academic.labInfrastructureScore || 5,
-    academicIntensity: 5,
+    academicIntensity: extra.academicIntensity ?? 5,
 
     // Work
     internshipChance: academic.internshipPotentialScore || 5,
     networkingQuality: academic.industryConnectionScore || 5,
-    startupEcosystem: 5,
+    startupEcosystem: extra.startupEcosystem ?? 5,
     universityJobs: academic.workOpportunityScore || 5,
 
     // Adaptation
@@ -63,39 +64,120 @@ function transformUniversityOptionToFrontend(data: any) {
     climateScore: life.climatePreferenceScore || 5,
     safety: life.safetyScore || 5,
     qualityOfLife: life.qualityOfLifeScore || 5,
-    internationalCommunity: 5,
+    internationalCommunity: extra.internationalCommunity ?? 5,
     publicTransport: life.publicTransportScore || 5,
 
     // Personal fit
     emotionalScore: fit.overallFitScore || 5,
-    regretRisk: 'low',
+    regretRisk: extra.regretRisk ?? 'low',
 
     // Text fields
     language: data.languageOfInstruction ? data.languageOfInstruction.join(', ') : '',
-    climate: '',
-    professorOfInterest: '',
+    climate: extra.climate ?? '',
+    professorOfInterest: extra.professorOfInterest ?? '',
     pros: data.pros || [],
     cons: data.cons || [],
     redFlags: data.redFlags || [],
     notes: data.personalNotes || '',
-    links: data.links ? data.links.map((l: any) => l.url) : [],
+    links: extra.links ?? (data.links ? data.links.map((l: any) => l.url || l) : []),
 
     // Timeline
     applicationDeadline: data.deadlines?.find((d: any) => d.type === 'application')?.date || '',
     visaDeadline: data.deadlines?.find((d: any) => d.type === 'visa')?.date || '',
     housingDeadline: data.deadlines?.find((d: any) => d.type === 'housing')?.date || '',
-    semesterStart: '',
-    semesterEnd: '',
+    semesterStart: extra.semesterStart ?? '',
+    semesterEnd: extra.semesterEnd ?? '',
 
     // Checklist
     checklist: data.checklist || [],
 
     // Diary
-    diary: [],
+    diary: extra.diary ?? [],
 
     // Metadata
     createdAt: data.createdAt || new Date().toISOString(),
     updatedAt: data.updatedAt || new Date().toISOString(),
+  };
+}
+
+// Transform Frontend format to DB format
+function transformFrontendToBackend(f: any) {
+  return {
+    universityName: f.name,
+    city: f.city,
+    country: f.country,
+    countryCode: f.countryCode || '',
+    latitude: f.lat || 0,
+    longitude: f.lng || 0,
+    websiteUrl: f.website || '',
+    stemFocus: f.stemFocus || [],
+    status: f.status || 'interested',
+    priorityTag: f.priority || 'B',
+    pros: f.pros || [],
+    cons: f.cons || [],
+    redFlags: f.redFlags || [],
+    personalNotes: f.notes || '',
+    estimatedMonthlyCost: {
+      housing: f.monthlyRent || 0,
+      food: f.monthlyFood || 0,
+      transport: f.monthlyTransport || 0,
+      internetPhone: f.monthlyPhone || 0,
+      studyMaterials: f.monthlyAcademic || 0,
+      leisure: f.monthlyLeisure || 0,
+      healthInsurance: f.monthlyHealth || 0,
+      misc: f.monthlyMisc || 0,
+      total: (f.monthlyRent || 0) + (f.monthlyFood || 0) + (f.monthlyTransport || 0) +
+             (f.monthlyPhone || 0) + (f.monthlyAcademic || 0) + (f.monthlyLeisure || 0) +
+             (f.monthlyHealth || 0) + (f.monthlyMisc || 0),
+    },
+    academicProfile: {
+      stemStrengthScore: f.stemReputation || 5,
+      researchOpportunityScore: f.researchOpportunities || 5,
+      labInfrastructureScore: f.labAccess || 5,
+      internshipPotentialScore: f.internshipChance || 5,
+      industryConnectionScore: f.networkingQuality || 5,
+      workOpportunityScore: f.universityJobs || 5,
+    },
+    lifeProfile: {
+      safetyScore: f.safety || 5,
+      qualityOfLifeScore: f.qualityOfLife || 5,
+      publicTransportScore: f.publicTransport || 5,
+      climatePreferenceScore: f.climateScore || 5,
+    },
+    userPreferencesFit: {
+      languageFitScore: f.languageDifficulty != null ? 10 - f.languageDifficulty : 5,
+      overallFitScore: f.emotionalScore || 5,
+    },
+    languageOfInstruction: f.language ? f.language.split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+    deadlines: [
+      f.applicationDeadline ? { type: 'application', date: f.applicationDeadline } : null,
+      f.visaDeadline ? { type: 'visa', date: f.visaDeadline } : null,
+      f.housingDeadline ? { type: 'housing', date: f.housingDeadline } : null,
+    ].filter(Boolean),
+    // Fields with no DB column equivalent go into extraData
+    extraData: {
+      acronym: f.acronym,
+      isFavorite: f.isFavorite,
+      monthlyTravel: f.monthlyTravel,
+      flightCost: f.flightCost,
+      visaCost: f.visaCost,
+      housingDeposit: f.housingDeposit,
+      setupCost: f.setupCost,
+      insuranceCost: f.insuranceCost,
+      scholarship: f.scholarship,
+      englishCourses: f.englishCourses,
+      creditCompatibility: f.creditCompatibility,
+      academicIntensity: f.academicIntensity,
+      startupEcosystem: f.startupEcosystem,
+      internationalCommunity: f.internationalCommunity,
+      regretRisk: f.regretRisk,
+      climate: f.climate,
+      professorOfInterest: f.professorOfInterest,
+      semesterStart: f.semesterStart,
+      semesterEnd: f.semesterEnd,
+      links: f.links,
+      diary: f.diary,
+    },
   };
 }
 
@@ -117,7 +199,6 @@ function mapStatus(dbStatus: string): 'interested' | 'candidate' | 'approved' | 
 function mapPriorityTag(dbPriority: unknown): 'A' | 'B' | 'C' | null {
   if (typeof dbPriority !== 'string') return null;
   const normalized = dbPriority.trim().toUpperCase();
-
   switch (normalized) {
     case 'A':
     case 'S':
@@ -133,6 +214,7 @@ function mapPriorityTag(dbPriority: unknown): 'A' | 'B' | 'C' | null {
 
 // Helper to get flag emoji from country code
 function getCountryFlag(countryCode: string): string {
+  if (!countryCode || countryCode.length !== 2) return '🏳️';
   const codePoints = countryCode
     .toUpperCase()
     .split('')
@@ -165,93 +247,70 @@ universitiesRouter.get('/:id', async (req: Request, res: Response) => {
     if (!university) {
       return res.status(404).json({ error: 'University not found' });
     }
-    const transformed = transformUniversityOptionToFrontend(university);
-    res.json(transformed);
+    res.json(transformUniversityOptionToFrontend(university));
   } catch (error) {
     console.error('Error fetching university:', error);
     res.status(500).json({ error: 'Failed to fetch university' });
   }
 });
 
-// POST /api/universities
+// POST /api/universities — accepts both DB format and frontend format
 universitiesRouter.post('/', async (req: Request, res: Response) => {
   try {
     const data = req.body;
+    // Detect frontend format by presence of 'name' instead of 'universityName'
+    const dbData = data.name ? transformFrontendToBackend(data) : data;
 
-    // Auto-calculate total if estimatedMonthlyCost provided without total
-    if (data.estimatedMonthlyCost && !data.estimatedMonthlyCost.total) {
-      const cost = data.estimatedMonthlyCost;
-      cost.total =
-        (cost.housing || 0) +
-        (cost.food || 0) +
-        (cost.transport || 0) +
-        (cost.internetPhone || 0) +
-        (cost.studyMaterials || 0) +
-        (cost.leisure || 0) +
-        (cost.healthInsurance || 0) +
-        (cost.misc || 0);
+    if (dbData.estimatedMonthlyCost && !dbData.estimatedMonthlyCost.total) {
+      const cost = dbData.estimatedMonthlyCost;
+      cost.total = (cost.housing || 0) + (cost.food || 0) + (cost.transport || 0) +
+        (cost.internetPhone || 0) + (cost.studyMaterials || 0) + (cost.leisure || 0) +
+        (cost.healthInsurance || 0) + (cost.misc || 0);
     }
 
-    const university = await prisma.universityOption.create({ data });
-    res.status(201).json(university);
+    const university = await prisma.universityOption.create({ data: dbData });
+    res.status(201).json(transformUniversityOptionToFrontend(university));
   } catch (error) {
     console.error('Error creating university:', error);
     res.status(400).json({ error: 'Failed to create university', details: String(error) });
   }
 });
 
-// PUT /api/universities/:id (full replace)
+// PUT /api/universities/:id — accepts both DB format and frontend format
 universitiesRouter.put('/:id', async (req: Request, res: Response) => {
   try {
     const data = req.body;
+    const dbData = data.name ? transformFrontendToBackend(data) : data;
 
-    if (data.estimatedMonthlyCost && !data.estimatedMonthlyCost.total) {
-      const cost = data.estimatedMonthlyCost;
-      cost.total =
-        (cost.housing || 0) +
-        (cost.food || 0) +
-        (cost.transport || 0) +
-        (cost.internetPhone || 0) +
-        (cost.studyMaterials || 0) +
-        (cost.leisure || 0) +
-        (cost.healthInsurance || 0) +
-        (cost.misc || 0);
+    if (dbData.estimatedMonthlyCost && !dbData.estimatedMonthlyCost.total) {
+      const cost = dbData.estimatedMonthlyCost;
+      cost.total = (cost.housing || 0) + (cost.food || 0) + (cost.transport || 0) +
+        (cost.internetPhone || 0) + (cost.studyMaterials || 0) + (cost.leisure || 0) +
+        (cost.healthInsurance || 0) + (cost.misc || 0);
     }
 
     const university = await prisma.universityOption.update({
       where: { id: req.params.id as string },
-      data,
+      data: dbData,
     });
-    res.json(university);
+    res.json(transformUniversityOptionToFrontend(university));
   } catch (error) {
     console.error('Error updating university:', error);
     res.status(400).json({ error: 'Failed to update university', details: String(error) });
   }
 });
 
-// PATCH /api/universities/:id (partial update)
+// PATCH /api/universities/:id — accepts both DB format and frontend format
 universitiesRouter.patch('/:id', async (req: Request, res: Response) => {
   try {
     const data = req.body;
-
-    if (data.estimatedMonthlyCost && !data.estimatedMonthlyCost.total) {
-      const cost = data.estimatedMonthlyCost;
-      cost.total =
-        (cost.housing || 0) +
-        (cost.food || 0) +
-        (cost.transport || 0) +
-        (cost.internetPhone || 0) +
-        (cost.studyMaterials || 0) +
-        (cost.leisure || 0) +
-        (cost.healthInsurance || 0) +
-        (cost.misc || 0);
-    }
+    const dbData = data.name ? transformFrontendToBackend(data) : data;
 
     const university = await prisma.universityOption.update({
       where: { id: req.params.id as string },
-      data,
+      data: dbData,
     });
-    res.json(university);
+    res.json(transformUniversityOptionToFrontend(university));
   } catch (error) {
     console.error('Error patching university:', error);
     res.status(400).json({ error: 'Failed to patch university', details: String(error) });

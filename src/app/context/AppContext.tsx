@@ -220,6 +220,7 @@ export function calcScoreBreakdown(
 interface AppContextType {
   state: AppState;
   dispatch: React.Dispatch<Action>;
+  apiDispatch: (action: Action) => Promise<void>;
   calcMonthlyTotal: (u: University) => number;
   calcOneTimeTotal: (u: University) => number;
   calcSixMonthTotal: (u: University) => number;
@@ -258,11 +259,36 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (error) {
         console.error('Failed to fetch universities from API:', error);
-        // Fallback to localStorage/seed data if API fails
       }
     };
 
     fetchUniversities();
+  }, []);
+
+  // Persist ADD/UPDATE to backend API
+  const apiDispatch = useCallback(async (action: Action) => {
+    dispatch(action);
+    try {
+      if (action.type === 'ADD_UNIVERSITY') {
+        await fetch('/mobimap/api/universities', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(action.payload),
+        });
+      } else if (action.type === 'UPDATE_UNIVERSITY') {
+        await fetch(`/mobimap/api/universities/${action.payload.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(action.payload),
+        });
+      } else if (action.type === 'DELETE_UNIVERSITY') {
+        await fetch(`/mobimap/api/universities/${action.payload}`, {
+          method: 'DELETE',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to sync with API:', error);
+    }
   }, []);
 
   useEffect(() => {
@@ -347,6 +373,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       value={{
         state,
         dispatch,
+        apiDispatch,
         calcMonthlyTotal,
         calcOneTimeTotal,
         calcSixMonthTotal,

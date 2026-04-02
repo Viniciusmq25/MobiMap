@@ -58,6 +58,9 @@ model UniversityOption {
   // Checklist
   checklist Json @default("[]") // [{id, label, completed}]
 
+  // Extra frontend fields not mapped to DB columns
+  extraData Json @default("{}")
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
